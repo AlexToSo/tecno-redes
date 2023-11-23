@@ -1,59 +1,52 @@
-import { useEffect, useState } from 'react'
-import { useFetch } from '../utils'
+import { useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { toast } from 'react-toastify'
+import { db } from '../firebase'
+import { getDoc, updateDoc, doc } from 'firebase/firestore'
 
 function Student () {
   const [code, setCode] = useState('')
   const [codeToCheck, setCodeToCheck] = useState('')
-  const [isCodeSent, setIsCodeSent] = useState(false)
+  const [currentStep, setCurrentStep] = useState(1)
   const urlParams = new URLSearchParams(window.location.search)
   const group = urlParams.get('group')
   const subGroup = urlParams.get('subgroup')
 
-  const { appendData: sendCode, loading: sendLoading, error: sendError } = useFetch(
-    `${import.meta.env.VITE_REACT_APP_API_URL}api/tecno-redes?group=${group}&subgroup=${subGroup}`
-  )
-
-  const { appendData: checkCode, loading: checkLoading, error: checkError } = useFetch(
-    `${import.meta.env.VITE_REACT_APP_API_URL}api/tecno-redes?group=${group}&subgroup=${subGroup}`
-  )
-
-  const handleSendCode = (event) => {
+  const handleSaveCode = async (event) => {
     event.preventDefault()
 
-    const onSent = () => {
-      setIsCodeSent(true)
-      setCode('')
-      toast.success('Código enviado correctamente')
+    try {
+      await updateDoc(doc(db, 'codes', `${group}${subGroup}`), { code })
+
+      toast.success('Código guardado correctamente')
+      setCurrentStep((previous) => previous + 1)
+    } catch (error) {
+      toast.error(error.message)
     }
-    sendCode(JSON.stringify({ code }), 'POST', onSent())
   }
 
-  const handleCheckCode = (event) => {
+  const handleCheckCode = async (event) => {
     event.preventDefault()
 
-    const onChecked = () => {
-      setCodeToCheck('')
-      toast.success('🎉 ¡¡¡Código correcto!!! 🎉')
-    }
-    checkCode(JSON.stringify({ code: codeToCheck }), 'POST', onChecked())
-  }
+    const teamSubGroup = subGroup === 'A' ? 'B' : 'A'
 
-  useEffect(() => {
-    if (sendError) {
-      setIsCodeSent(false)
-      toast.error(sendError.message)
-    } else if (checkError) toast.error(checkError.message)
-  }, [sendError, checkError])
+    try {
+      const teamCode = (await getDoc(doc(db, 'codes', `${group}${teamSubGroup}`))).data().code
+      if (teamCode === codeToCheck) {
+        setCurrentStep((previous) => previous + 1)
+        toast.success('🎉 ¡¡¡Código correcto!!! 🎉')
+      } else toast.error('❌ Código incorrecto ❌')
+    } catch (error) {
+      toast.error(error.message)
+    }
+  }
 
   return (
     <>
-      <h1>Grupo {group}</h1>
-      <h1>Subgrupo {subGroup}</h1>
+      <h1>Grupo {group}-{subGroup}</h1>
       <Form>
-        {subGroup === 'A' &&
+        {(currentStep === 1) && (subGroup === 'A') &&
         (
           <>
             <h2>Elegid un color</h2>
@@ -65,14 +58,13 @@ function Student () {
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
               />
-              <p>Color seleccionado: {code}</p>
-              <Button variant='primary' type='submit' onClick={handleSendCode} disabled={sendLoading}>
+              <Button variant='primary' type='submit' onClick={handleSaveCode}>
                 Validar
               </Button>
             </Form.Group>
           </>
         )}
-        {subGroup === 'B' &&
+        {(currentStep === 1) && (subGroup === 'B') &&
         (
           <>
             <h2>Elegid una palabra de 3 letras</h2>
@@ -86,14 +78,13 @@ function Student () {
                 onChange={(e) => setCode(e.target.value)}
                 required
               />
-              <p>Palabra seleccionada: {code}</p>
-              <Button variant='primary' type='submit' onClick={handleSendCode} disabled={sendLoading}>
+              <Button variant='primary' type='submit' onClick={handleSaveCode}>
                 Validar
               </Button>
             </Form.Group>
           </>
         )}
-        {isCodeSent && subGroup === 'A' &&
+        {(currentStep === 2) && (subGroup === 'A') &&
         (
           <>
             <h2>Adivinad la palabra de 3 letras de vuestros compañeros</h2>
@@ -107,14 +98,13 @@ function Student () {
                 onChange={(e) => setCodeToCheck(e.target.value)}
                 required
               />
-              <p>Palabra seleccionada: {code}</p>
-              <Button variant='primary' type='submit' onClick={handleCheckCode} disabled={checkLoading}>
+              <Button variant='primary' type='submit' onClick={handleCheckCode}>
                 Comprobar
               </Button>
             </Form.Group>
           </>
         )}
-        {isCodeSent && subGroup === 'B' &&
+        {(currentStep === 2) && (subGroup === 'B') &&
         (
           <>
             <h2>Adivinad el color de vuestros compañeros</h2>
@@ -126,12 +116,21 @@ function Student () {
                 value={codeToCheck}
                 onChange={(e) => setCodeToCheck(e.target.value)}
               />
-              <p>Color seleccionado: {code}</p>
-              <Button variant='primary' type='submit' onClick={handleCheckCode} disabled={checkLoading}>
+              <Button variant='primary' type='submit' onClick={handleCheckCode}>
                 Comprobar
               </Button>
             </Form.Group>
           </>
+        )}
+        {currentStep === 3 &&
+        (
+          <>
+            <h2>🎊🎊 ¡¡¡Enhorabuena!!! 🎊🎊</h2>
+            <p>¡¡¡Habéis completado la actividad!!!</p>
+          </>
+        )}
+        {currentStep > 1 && (
+          <Button variant={null} onClick={() => setCurrentStep((previous) => previous - 1)}>⬅️</Button>
         )}
       </Form>
     </>
