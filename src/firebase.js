@@ -3,12 +3,12 @@ import { getFirestore } from 'firebase/firestore'
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyC3tFEjC1ubtsa-7Ho0TYP1vAILKwxY714',
-  authDomain: 'tecno-redes.firebaseapp.com',
-  projectId: 'tecno-redes',
-  storageBucket: 'tecno-redes.appspot.com',
-  messagingSenderId: '690454372038',
-  appId: '1:690454372038:web:8c1fcbbf189cf9312241c7'
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 }
 // Initialize Firebase
 initializeApp(firebaseConfig)
