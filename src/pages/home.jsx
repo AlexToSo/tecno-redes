@@ -1,13 +1,8 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import styled from 'styled-components'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
-
-const Button2 = styled(Button)`
-margin: 10px;
-`
 
 function Home () {
   const navigate = useNavigate()
@@ -30,12 +25,12 @@ function Home () {
       <Form>
         <h2>Elegid un rol</h2>
         <Form.Group controlId='formBasicRol'>
-          <Button2 variant='primary' type='button' onClick={toggleForm}>
+          <Button variant='primary' type='button' onClick={toggleForm}>
             Alumno
-          </Button2>
-          <Button2 variant='primary' type='button' onClick={() => toast.error('Acceso denegado')}>
+          </Button>
+          <Button variant='primary' type='button' onClick={() => toast.error('Acceso denegado')}>
             Profesor
-          </Button2>
+          </Button>
         </Form.Group>
         {isStudent &&
           (
@@ -60,9 +55,9 @@ function Home () {
                   <option value='B'>Subgrupo B</option>
                 </Form.Select>
               </Form.Group>
-              <Button2 variant='primary' type='submit' onClick={handleFormSubmit}>
+              <Button variant='primary' type='submit' onClick={handleFormSubmit}>
                 Validar
-              </Button2>
+              </Button>
             </>
           )}
       </Form>
