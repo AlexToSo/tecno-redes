@@ -46,7 +46,7 @@ function Student () {
 
   return (
     <>
-      <h1>Grupo {group}-{subGroup}</h1>
+      <h1>Equipo {group}-{subGroup}</h1>
       <Form>
         {(currentStep === 1) && (subGroup === 'A') &&
         (
