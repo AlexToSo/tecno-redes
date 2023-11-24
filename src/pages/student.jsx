@@ -4,8 +4,10 @@ import Button from 'react-bootstrap/Button'
 import { toast } from 'react-toastify'
 import { db } from '../firebase'
 import { getDoc, updateDoc, doc } from 'firebase/firestore'
+import { useNavigate } from 'react-router-dom'
 
 function Student () {
+  const navigate = useNavigate()
   const [code, setCode] = useState('')
   const [codeToCheck, setCodeToCheck] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
@@ -129,9 +131,13 @@ function Student () {
             <p>¡¡¡Habéis completado la actividad!!!</p>
           </>
         )}
-        {currentStep > 1 && (
-          <Button variant={null} onClick={() => setCurrentStep((previous) => previous - 1)}>⬅️</Button>
-        )}
+        {currentStep > 1
+          ? (
+            <Button variant={null} onClick={() => setCurrentStep((previous) => previous - 1)}>⬅️</Button>
+            )
+          : (
+            <Button variant={null} onClick={() => navigate('/')}>⬅️</Button>
+            )}
       </Form>
     </>
   )

@@ -3,6 +3,7 @@ import Button from 'react-bootstrap/Button'
 import styled from 'styled-components'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const Button2 = styled(Button)`
 margin: 10px;
@@ -32,7 +33,7 @@ function Home () {
           <Button2 variant='primary' type='button' onClick={toggleForm}>
             Alumno
           </Button2>
-          <Button2 variant='primary' type='button'>
+          <Button2 variant='primary' type='button' onClick={() => toast.error('Acceso denegado')}>
             Profesor
           </Button2>
         </Form.Group>
