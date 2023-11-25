@@ -19,6 +19,10 @@ function Student () {
     event.preventDefault()
 
     try {
+      if (code.length === 0) throw new Error('Debes introducir un código')
+      else if (subGroup === 'A' && !/^#[0-9A-Fa-f]{6}$/.test(code)) throw new Error('El código debe corresponder a un color')
+      else if (subGroup === 'B' && !/^[A-Za-z]{3}$/.test(code)) throw new Error('El código debe tener 3 letras A-Z o a-z')
+
       await updateDoc(doc(db, 'codes', `${group}${subGroup}`), { code })
 
       toast.success('Código guardado correctamente')

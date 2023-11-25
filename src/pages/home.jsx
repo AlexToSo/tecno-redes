@@ -16,7 +16,9 @@ function Home () {
 
   const handleFormSubmit = (event) => {
     event.preventDefault()
-    navigate(`/student?group=${group}&subgroup=${subGroup}`)
+    if (group < 1 || group > 5) toast.error('Debes introducir un grupo')
+    else if (subGroup === '') toast.error('Debes introducir un subgrupo')
+    else navigate(`/student?group=${group}&subgroup=${subGroup}`)
   }
 
   return (
@@ -50,7 +52,7 @@ function Home () {
               <Form.Group controlId='formBasicSubGroup'>
                 <Form.Label>Subgrupo</Form.Label>
                 <Form.Select value={subGroup} onChange={(e) => setSubGroup(e.target.value)}>
-                  <option>Selecciona subgrupo</option>
+                  <option value=''>Selecciona subgrupo</option>
                   <option value='A'>Subgrupo A</option>
                   <option value='B'>Subgrupo B</option>
                 </Form.Select>
